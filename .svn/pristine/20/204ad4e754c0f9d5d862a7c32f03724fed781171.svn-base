@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title of the document</title>
+    <script data-main="src/main" src="js/preloader.js" type="text/javascript"></script>
+    <script data-main="src/main" src="js/jquery.js" type="text/javascript"></script>
+    <script data-main="src/main" src="js/misc.js" type="text/javascript"></script>
+    <script data-main="src/main" src="js/engine.js" type="text/javascript"></script>
+    <script data-main="src/main" src="js/main.js" type="text/javascript"></script>
+    <script data-main="src/main" src="js/keypress-2.1.0.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+    <link rel="stylesheet" type="text/css" href="css/fonts.css"/>
+  </head>
+
+  <body>
+    <div id="gameArea">
+      <canvas id="main" width="668px" height="476px"></canvas>
+      <div id="map">
+      </div>
+      <div id="statspanel">
+        <table id="statstable">
+          <tr>
+            <td rowspan="2"><span class="scoretitle">Tank:</span><div class="airprogressSmall"><div id="airsmall" class="airprogressSmallInner"></div></div></td>
+            <td><span class="scoretitle">Air:<span class="score" id="oxygen"></span><div class="airprogressBig"><div id="airbig" class="airprogressBigInner"></div></div></td>
+          </tr>
+          <tr>
+            <td>
+              <span class="scoretitle">Score: </span><span class="score" id="score"></span>
+              <span class="scoretitle">Men: </span><span class="score" id="men"></span>
+              <span class="scoretitle">Bombs: </span><span class="score" id="bombs"></span>
+              <span class="scoretitle">Player Pos: </span><span class="score" id="playerPos"></span>
+            </td>
+            <td style="text-align: right;">
+              <span class="bombactivated" id="bombActivated">BOMB ACTIVATED!</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <audio id="snd_step" src="snd/step.wav" preload="auto"/>
+    <audio id="snd_diamond" src="snd/diamond.wav" preload="auto"/>
+    <audio id="snd_air" src="snd/air.wav" preload="auto"/>
+    <audio id="snd_bomb" src="snd/bomb.wav" preload="auto"/>
+    <audio id="snd_blowup" src="snd/blowup.wav" preload="auto"/>
+    <audio id="snd_die" src="snd/die.wav" preload="auto"/>
+    <audio id="snd_endgame" src="snd/endgame.wav" preload="auto"/>
+    <audio id="snd_killmonster" src="snd/killmonster.wav" preload="auto"/>
+  </body>
+
+</html>

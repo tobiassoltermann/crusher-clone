@@ -1,0 +1,219 @@
+var RoomColors = {
+  'blue': 0,
+  'green': 1,
+  'purple': 2,
+  'red': 3,
+  'yellow': 4
+};
+var DiamondColors = {
+  'blue': 0,
+  'green': 1,
+  'purple': 2,
+  'red': 3,
+  'yellow': 4
+};
+var MonsterColors = {
+  'blue': 0,
+  'green': 1,
+  'purple': 2,
+  'red': 3,
+  'yellow': 4
+};
+
+var StartPositions = {
+  'TOP': {x: 9, y: 0},
+  'BOTTOM': {x: 9, y: 18},
+  'LEFT': {x: 0, y: 6},
+  'RIGHT': {x: 12, y: 6}
+}
+
+Room = function() {
+  this.elems = Create2DArray(this.width, this.height);
+  this.brickColor = getRandomItem(RoomColors);
+  this.diamondColor = getRandomItem(DiamondColors);
+  this.monsterColor = getRandomItem(MonsterColors);
+}
+Room.prototype.constructor = Room;
+Room.prototype.width = 19;
+Room.prototype.height = 13;
+
+Room.prototype.getObject = function(x, y) {
+  return elems[x][y];
+}
+
+Room.prototype.generate = function(generator) {
+  this.elems = generator.generate();
+}
+
+RoomGenerator = function(paramObj) {
+  if (paramObj)
+  {
+    this.params = paramObj;
+  } else {
+    this.params = { // Default probabilities:
+      fixed: 0.2105, // 52 of 247
+      color: 0.2469, // 61 of 247
+      air: 0.0121, // 3 of 247
+      diamond: 0.0242, // 6 of 247
+      bomb: 0.0040, // 1 of 247
+      empty: 0.5344 // 132 of 247
+    }
+  }
+}
+RoomGenerator.prototype.constructor = RoomGenerator;
+RoomGenerator.prototype.width = 19;
+RoomGenerator.prototype.height = 13;
+RoomGenerator.prototype.generate = function() {
+  var drng = new DRNG();
+  drng.addNumber('fixed', this.params.fixed);
+  drng.addNumber('color', this.params.color);
+  drng.addNumber('air', this.params.air);
+  drng.addNumber('diamond', this.params.diamond);
+  drng.addNumber('bomb', this.params.bomb);
+  drng.addNumber('empty', this.params.empty);
+  var room = Create2DArray(this.width, this.height);
+  var lines = room;
+  for (var crtX = 0; crtX < lines.length; crtX++)
+  {
+    var crtLine = lines[crtX];
+    for (var crtY = 0; crtY < crtLine.length; crtY++)
+    {
+      room[crtX][crtY] = drng.getRandomNumber();
+    }
+  }
+  return room;
+}
+
+Engine = function(canvas) {
+  this.isReady = false;
+  this.img = {};
+  this.c = canvas;
+  this.c2 = canvas.getContext('2d');
+
+  this.rooms = {};
+  for (i = 0; i < 24; i++)
+  {
+    this.rooms[i] = new Room();
+    this.rooms[i].generate(new RoomGenerator());
+  }
+
+  this.crtRoom = 13;
+  this.startPos = getRandomItem(StartPositions);
+
+
+  var _this = this;
+  this.preloadImages(function() {
+    setTimeout(
+      function() {
+        _this.tick();
+      }
+    , 100);
+  });
+}
+
+Engine.prototype.preloadImages = function(callback) {
+  var toLoad = [
+    "brick_blue",
+    "brick_green",
+    "brick_purple",
+    "brick_red",
+    "brick_yellow",
+    "diamond_blue",
+    "diamond_green",
+    "diamond_purple",
+    "diamond_red",
+    "diamond_yellow",
+    "brick_fixed",
+    "bomb",
+    "eve",
+    "man_happy",
+    "man_sad",
+    "question",
+    "mrx",
+    "map",
+    "o2",
+    "monster_blue",
+    "monster_red",
+    "monster_green",
+    "monster_purple",
+    "monster_yellow",
+    "safe",
+    "ted"
+  ];
+
+  this.img = new Array()
+  _this = this;
+  new preLoader(toLoad.map(this.addPath), {
+    onProgress: function(img, imageEl, length) {
+      var interm = img.substring("/rsc/".length);
+      var toLoadItem = interm.substring(0, interm.length- (".png".length));
+      _this.img[toLoadItem] = imageEl;
+    },
+    onComplete: function(loaded, errors) {
+      this.isReady= true;
+      callback();
+    }
+  });
+}
+Engine.prototype.leftOffset = 30;
+Engine.prototype.rightOffset = 30;
+Engine.prototype.topOffset = 30;
+Engine.prototype.bottomOffset = 30;
+
+Engine.prototype.fieldSize = 32;
+Engine.prototype.addPath = function (current) {
+  return "/rsc/"  + current + ".png";
+}
+Engine.prototype.constructor = Engine;
+
+Engine.prototype.draw = function(){
+  this.c2.fillStyle = "#000000";
+  this.c2.fillRect(0, 0, this.c2.width, this.c2.height);
+  var crtRoom = this.rooms[this.crtRoom];
+  var lines = crtRoom.elems;
+  for (var crtX = 0; crtX < lines.length; crtX++)
+  {
+    var crtLine = lines[crtX];
+    for (var crtY = 0; crtY < crtLine.length; crtY++)
+    {
+      var crtElement = crtLine[crtY];
+
+      switch (crtElement) {
+        case 'fixed':
+          this.drawImage("brick_fixed", crtX, crtY);
+          break;
+        case 'color':
+          this.drawImage("brick_" + crtRoom.brickColor, crtX, crtY);
+          break;
+        case 'air':
+          this.drawImage("o2", crtX, crtY);
+          break;
+        case 'diamond':
+          this.drawImage("diamond_" + crtRoom.diamondColor, crtX, crtY);
+          break;
+        case 'bomb':
+          this.drawImage("bomb", crtX, crtY);
+          break;
+        case 'empty':
+          break;
+      }
+    }
+  }
+}
+Engine.prototype.ready = function() {
+  return this.isReady;
+}
+
+Engine.prototype.drawImage = function(image, posX, posY)
+{
+  var imageFull = this.img[image];
+  try {
+    this.c2.drawImage(imageFull, this.leftOffset + posX * this.fieldSize, this.topOffset + posY * this.fieldSize, 32 - (this.rightOffset / RoomGenerator.prototype.width), 32 - (this.bottomOffset / RoomGenerator.prototype.height));
+  } catch (error) {
+    
+  }
+}
+
+Engine.prototype.tick = function(){
+  this.draw();
+}

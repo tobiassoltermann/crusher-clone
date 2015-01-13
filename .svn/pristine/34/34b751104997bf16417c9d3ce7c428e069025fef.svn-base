@@ -1,0 +1,9 @@
+body {
+  background-color: black;
+}
+#main {
+  float: right;
+  right: 0;
+  left: 0;
+  border: 1px solid white;
+}

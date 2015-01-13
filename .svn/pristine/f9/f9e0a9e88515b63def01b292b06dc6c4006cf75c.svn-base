@@ -1,0 +1,12 @@
+
+(function (){
+  $(document).ready(function(){
+    var e = new Engine($('#main')[0]);
+    if (e.ready())
+      e.draw();
+      
+    window.engine = e;
+
+  });
+
+})();

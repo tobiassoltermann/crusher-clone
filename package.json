@@ -2,10 +2,20 @@
   "name": "crusher",
   "version": "1.0.0",
   "description": "Remake of an old game",
-  "main": "index.js",
+  "main": "client/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "window": {
+    "title": "Crusher",
+    "icon": "client/rsc/man_happy.png",
+    "toolbar": false,
+    "frame": true,
+    "position": "center",
+    "min_width": 1024,
+    "min_height": 768
+
+  }
 }
